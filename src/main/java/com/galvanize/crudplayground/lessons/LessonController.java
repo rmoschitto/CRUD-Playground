@@ -86,7 +86,7 @@ public class LessonController {
                 .orElseThrow(() -> new NoSuchElementException(String.format("Record with title %s is not present", title)));
     }
 
-    @GetMapping("/lesson/between?date1={}&date2={}")
+    @GetMapping("/lesson/between")
     public List<Lesson> getLessonsBetweenDates(@RequestParam String date1, @RequestParam String date2) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate dateOne = LocalDate.parse(date1, formatter);
