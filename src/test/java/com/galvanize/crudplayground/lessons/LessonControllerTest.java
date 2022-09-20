@@ -164,4 +164,48 @@ public class LessonControllerTest {
 
     }
 
+    // Endpoint #1: GET /lessons/find/{title}
+    //Create an endpoint that gets a lesson by its title:
+    @Test
+    @Transactional
+    @Rollback
+    public void canGetRecordByTitle() throws Exception {
+        this.repository.save(lesson1);
+        this.repository.save(lesson2);
+
+        String url = String.format("/lesson/find/%s", lesson2.getTitle());
+        MockHttpServletRequestBuilder request = get(url);
+
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("The colts are going to the superbowl"))
+                .andExpect(jsonPath("$.id").value(lesson2.getId()))
+                .andExpect(jsonPath("$.deliveredOn").value("2022-09-11"));
+
+        this.mvc.perform(get("/lesson/-1"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Record with id -1 is not present"));
+    }
+
+
+    //Endpoint #2: Get /lessons/between?date1={}&date2={}
+    //Create an endpoint that finds all of the lessons between two dates in the database:
+    @Test
+    @Transactional
+    @Rollback
+    public void canGetRecordBetweenDates() throws Exception {
+        this.repository.save(lesson1);
+        this.repository.save(lesson2);
+
+        String url = String.format("/lessons/between?date1={}&date2={}");
+        MockHttpServletRequestBuilder request = get(url);
+
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("The colts are going to the superbowl"))
+                .andExpect(jsonPath("$.id").value(lesson2.getId()))
+                .andExpect(jsonPath("$.deliveredOn").value("2022-09-11"));
+    }
+
+
 }

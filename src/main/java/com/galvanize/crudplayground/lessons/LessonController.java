@@ -80,6 +80,22 @@ public class LessonController {
        return this.repository.save(oldLesson);
     }
 
+    @GetMapping("/lesson/find/{title}")
+    public Lesson getOneLessonByTitle(@PathVariable String title) {
+        return repository.findByTitle(title)
+                .orElseThrow(() -> new NoSuchElementException(String.format("Record with title %s is not present", title)));
+    }
+
+    @GetMapping("/lesson/between?date1={}&date2={}")
+    public List<Lesson> getLessonsBetweenDates(@RequestParam String date1, @RequestParam String date2) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate dateOne = LocalDate.parse(date1, formatter);
+        LocalDate dateTwo = LocalDate.parse(date2, formatter);
+         return this.repository.findByDeliveredOnBetween(dateOne,dateTwo);
+               // .orElseThrow(() -> new NoSuchElementException(String.format("Record with date range %s - %s is not present", dateOne, dateTwo)));
+    }
+
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchElementException.class)
     public String handleElementNotFound(Exception e) {
